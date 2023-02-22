@@ -1,9 +1,14 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: template-repository
-Source: https://github.com/deepin-community/template-repository
+Upstream-Name: deepin-git-dch-plugins
+Source: http://gerrit.uniontech.com/a/deepin-autotools/deepin-git-dch-plugins
 
-Files: *
-Copyright: 2023 Tsic404 <liuheng@deepin.org>
+Files: scripts/deepin_changelog.py
+Copyright: 2022 hudeng <hudeng@uniontech.com>
+License: GPL-3+
+ .
+
+Files: debian/*
+Copyright: 2022 hudeng <hudeng@uniontech.com>
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -20,3 +25,4 @@ License: GPL-2+
  .
  On Debian systems, the complete text of the GNU General
  Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
+

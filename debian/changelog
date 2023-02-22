@@ -1,5 +1,5 @@
-template-repository (1.0-1) unstable; urgency=medium
+deepin-gbp-dch-plugins (0.0.1) unstable; urgency=medium
 
-  * Initial release
+  * Initial release 
 
- -- Tsic404 <liuheng@deepin.org>  Sat, 28 Jan 2023 13:46:49 +0800
+ -- hudeng <hudeng@uniontech.com>  Wed, 06 Jul 2022 15:02:49 +0800
