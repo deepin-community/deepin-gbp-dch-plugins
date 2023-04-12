@@ -452,7 +452,7 @@ def build_parser(name):
 
     parser.add_boolean_config_file_option(option_name="ignore-branch", dest="ignore_branch")
     naming_group.add_config_file_option(option_name="upstream-branch", dest="upstream_branch")
-    naming_group.add_option("--deepin-branch", dest="deepin_branch", default="develop/snipe")
+    naming_group.add_option("--deepin-branch", dest="deepin_branch", default="master")
     naming_group.add_config_file_option(option_name="upstream-tag", dest="upstream_tag")
     naming_group.add_config_file_option(option_name="debian-tag", dest="debian_tag")
     naming_group.add_config_file_option(option_name="snapshot-number", dest="snapshot_number",
@@ -574,7 +574,7 @@ def main(argv):
 
         if options.deepin_branch != branch and not options.ignore_branch:
             gbp.log.err("You are not on branch '%s' but on '%s'" % (options.deepin_branch, branch))
-            raise GbpError("Use --ignore-branch to ignore or --deepin-branch to set the branch name, default deepin-branch is develop/snipe.")
+            raise GbpError("Use --ignore-branch to ignore or --deepin-branch to set the branch name, default deepin-branch is master.")
 
         source = DebianSource('.')
         cp = maybe_create_changelog(repo, source, options)
