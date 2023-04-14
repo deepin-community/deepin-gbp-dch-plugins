@@ -121,8 +121,8 @@ def format_changelog_entry(commit_info, options, last_commit=False):
     if options.meta:
         (pms_cmds, body) = extract_pms_cmds(body, options)
         (influence_cmds, body) = extract_influence_cmds(body, options)
-    if len(pms_cmds) == 0 and len(influence_cmds) == 0:
-        return None
+    #if len(pms_cmds) == 0 and len(influence_cmds) == 0:
+    #    return None
 
     body = filter_ignore_rx_matches(body, options)
 
