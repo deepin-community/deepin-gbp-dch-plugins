@@ -30,4 +30,4 @@
 - 本插件参考`git-buildpackage`的`dch`插件实现。
 - 本插件仓库地址：
 
-        deb [trusted=yes] https://ci.deepin.com/repo/topics/beige/deepin-dch/ unstable main
+        deb [trusted=yes] https://ci.deepin.com/repo/obs/deepin:/CI:/TestingIntegration:/test-intergration-pr-100/testing/ ./
