@@ -676,8 +676,8 @@ def main(argv):
                            version=version_change,
                            dch_options=dch_options)
 
-        fixup_section(repo, use_git_author=options.use_git_author, options=options,
-                      dch_options=dch_options)
+        #fixup_section(repo, use_git_author=options.use_git_author, options=options,
+        #              dch_options=dch_options)
 
         if options.release:
             do_release(changelog, repo, cp, use_git_author=options.use_git_author,
