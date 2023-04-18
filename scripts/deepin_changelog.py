@@ -77,14 +77,14 @@ def extract_influence_cmds(lines, opts):
             other_lines.append(line)
     return (commands, other_lines)
 
-def extract_pms_cmds(lines, opts):
-    """Return a dictionary of the pms commands
+def extract_git_cmds(lines, opts):
+    """Return a dictionary of the git commands
     contained in the the given lines.  i.e. {'Bug' : [1], 'Task':
     [3, 4]}."""
     meta_closes = 'Bug|Task|Issue'
     meta_closes_bugnum = '\d+'
     _bug_re = re.compile(meta_closes_bugnum, re.I)
-    bts_rx = re.compile(r'(?P<pms>%s)' % (meta_closes), re.I)
+    bts_rx = re.compile(r'(?P<git>%s)' % (meta_closes), re.I)
     commands = {}
     other_lines = []
     for line in lines:
@@ -92,10 +92,22 @@ def extract_pms_cmds(lines, opts):
         if m:
             bug_nums = [bug.strip() for bug in _bug_re.findall(line, re.I)]
             if bug_nums:
+                # https://github.com/linuxdeepin/developer-center issue number handler
+                # now a lot of dde repository issues at developer-center.
+                if m.group('git') == 'Issue':
+                    new_bug_nums = []
+                    if "https://github.com/linuxdeepin/developer-center/issues" in line:
+                        for bug_num in bug_nums:
+                            new_bug_nums.append("https://github.com/linuxdeepin/developer-center/issues/" + bug_num)
+                    else:
+                        for bug_num in bug_nums:
+                            new_bug_nums.append("#" + bug_num)
+
+                    bug_nums = new_bug_nums
                 try:
-                    commands[m.group('pms')] += bug_nums
+                    commands[m.group('git')] += bug_nums
                 except KeyError:
-                    commands[m.group('pms')] = bug_nums
+                    commands[m.group('git')] = bug_nums
         else:
             other_lines.append(line)
     return (commands, other_lines)
@@ -115,13 +127,13 @@ def format_changelog_entry(commit_info, options, last_commit=False):
     if options.idlen:
         entry[0] = '[%s] ' % commitid[0:options.idlen] + entry[0]
 
-    pms_cmds = {}
+    git_cmds = {}
     influence_cmds = {}
     thanks = []
     if options.meta:
-        (pms_cmds, body) = extract_pms_cmds(body, options)
+        (git_cmds, body) = extract_git_cmds(body, options)
         (influence_cmds, body) = extract_influence_cmds(body, options)
-    #if len(pms_cmds) == 0 and len(influence_cmds) == 0:
+    #if len(git_cmds) == 0 and len(influence_cmds) == 0:
     #    return None
 
     body = filter_ignore_rx_matches(body, options)
@@ -129,9 +141,9 @@ def format_changelog_entry(commit_info, options, last_commit=False):
     if 'full' in git_dch_cmds or (options.full and 'short' not in git_dch_cmds):
         # Add all non-blank body lines.
         entry.extend([line for line in body if line.strip()])
-    for pms in pms_cmds:
-        pms_msg = '(%s: %s)' % (pms, ', '.join(pms_cmds[pms]))
-        entry[-1] += pms_msg
+    for cmd in git_cmds:
+        github_msg = '(%s: %s)' % (cmd, ', '.join(git_cmds[cmd]))
+        entry[-1] += github_msg
     for influence in influence_cmds:
         influence_msg = '(%s: %s)' % (influence, influence_cmds[influence])
         entry[-1] += influence_msg

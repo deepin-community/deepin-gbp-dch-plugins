@@ -1,3 +1,11 @@
+deepin-gbp-dch-plugins (0.0.2) unstable; urgency=medium
+
+  * chore: change default deepin branch
+  * chore(CI): cancel filter commit message
+  * chore: Optimize the collection of issue information on Github
+
+ -- Deepin Packages Builder <packages@deepin.org>  Tue, 18 Apr 2023 11:27:44 +0800
+
 deepin-gbp-dch-plugins (0.0.1) unstable; urgency=medium
 
   * Initial release 
