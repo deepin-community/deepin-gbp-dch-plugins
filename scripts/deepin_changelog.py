@@ -172,7 +172,7 @@ def format_changelog_entry(commit_info, options, last_commit=False):
         influence_msg = '(%s: %s)' % (influence, influence_cmds[influence])
         entry[-1] += influence_msg
 
-    return entry
+    return entry, thanks
 
 def guess_version_from_upstream(repo, upstream_tag_format, upstream_branch, cp=None):
     """
@@ -343,8 +343,8 @@ def parse_commit(repo, commitid, opts, last_commit=False):
     format_entry = user_customizations.get('format_changelog_entry')
     if not format_entry:
         format_entry = format_changelog_entry
-    entry = format_entry(commit_info, opts, last_commit=last_commit)
-    return entry, (author, email)
+    entry, thanks = format_entry(commit_info, opts, last_commit=last_commit)
+    return entry, thanks, (author, email)
 
 
 def guess_documented_commit(cp, repo, tagformat):
@@ -515,6 +515,8 @@ def build_parser(name):
                              "even if it doesn't match the list of known distributions")
     version_group.add_option("-N", "--new-version", dest="new_version",
                              help="use this as base for the new version number")
+    version_group.add_option("-P", "--thanks-print", action="store_true", dest="thanks_print", default=False,
+                             help="only statistics and print external contributors")
     version_group.add_config_file_option("urgency", dest="urgency")
     version_group.add_option("--bpo", dest="bpo", action="store_true", default=False,
                              help="Increment the Debian release number for an upload to backports, "
@@ -666,27 +668,44 @@ def main(argv):
                 version_change['version'] = v
 
         i = 0
+        all_thanks = []
         for c in commits:
             i += 1
             parsed = parse_commit(repo, c, options,
                                   last_commit=(i == len(commits)))
-            commit_msg, (commit_author, commit_email) = parsed
+            commit_msg, thanks, (commit_author, commit_email) = parsed
+            all_thanks += thanks
             if not commit_msg:
                 # Some commits can be ignored
                 continue
 
-            if add_section:
-                # Add a section containing just this message (we can't
-                # add an empty section with dch)
-                cp.add_section(distribution="UNRELEASED", msg=commit_msg,
-                               version=version_change,
-                               author="Deepin Packages Builder",
-                               email="packages@deepin.org",
-                               dch_options=dch_options)
-                # Adding a section only needs to happen once.
-                add_section = False
+            if not options.thanks_print:
+                if add_section:
+                    # Add a section containing just this message (we can't
+                    # add an empty section with dch)
+                    cp.add_section(distribution="UNRELEASED", msg=commit_msg,
+                                version=version_change,
+                                author="Deepin Packages Builder",
+                                email="packages@deepin.org",
+                                dch_options=dch_options)
+                    # Adding a section only needs to happen once.
+                    add_section = False
+                else:
+                    cp.add_entry(commit_msg, author="Deepin Packages Builder", email="packages@deepin.org", dch_options=dch_options)
+
+        # Show thanks list
+        if options.thanks_print or options.new_version:
+            if all_thanks:
+                new_thanks = []
+                for thank in all_thanks:
+                    if thank not in new_thanks:
+                        new_thanks.append(thank)
+                gbp.log.info('Thanks to %s' % ' ,'.join(new_thanks))
             else:
-                cp.add_entry(commit_msg, author="Deepin Packages Builder", email="packages@deepin.org", dch_options=dch_options)
+                gbp.log.info('No Thanks contributors.')
+
+            if options.thanks_print:
+                return
 
         # Show a message if there were no commits (not even ignored
         # commits).
