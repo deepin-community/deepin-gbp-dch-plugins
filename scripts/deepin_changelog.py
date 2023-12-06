@@ -314,8 +314,7 @@ def do_release(changelog, repo, cp, use_git_author, dch_options):
     if snapshot:
         cp['MangledVersion'] = release
         mangle_changelog(changelog, cp)
-    cp.spawn_dch(release=True, author="Deepin Packages Builder", email="packages@deepin.org", dch_options=dch_options)
-
+    cp.spawn_dch(release=True, dch_options=dch_options)
 
 def do_snapshot(changelog, repo, next_snapshot):
     """
@@ -685,13 +684,13 @@ def main(argv):
                     # add an empty section with dch)
                     cp.add_section(distribution="UNRELEASED", msg=commit_msg,
                                 version=version_change,
-                                author="Deepin Packages Builder",
-                                email="packages@deepin.org",
+                                # author="Deepin Packages Builder",
+                                # email="packages@deepin.org",
                                 dch_options=dch_options)
                     # Adding a section only needs to happen once.
                     add_section = False
                 else:
-                    cp.add_entry(commit_msg, author="Deepin Packages Builder", email="packages@deepin.org", dch_options=dch_options)
+                    cp.add_entry(commit_msg, dch_options=dch_options)
 
         # Show thanks list
         if options.thanks_print or options.new_version:
