@@ -710,6 +710,10 @@ def main(argv):
         # commits).
         if not commits:
             gbp.log.info("No changes detected from %s to %s." % (since, until))
+            cp.add_section(distribution="UNRELEASED", msg=[f"Update version to {version_change['version']}(No code changes!)"],
+                version=version_change,
+                dch_options=dch_options)
+            add_section = False
 
         if add_section:
             # If we end up here, then there were no commits to include,
